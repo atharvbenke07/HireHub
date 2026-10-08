@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Job Seeker Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">
+        Welcome, {{ request.user.username }} 👋
+    </h2>
+
+    <!-- Statistics Cards -->
+    <div class="row g-3">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>Total Applications</h6>
+                    <h2>{{ total_applications }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>Applied</h6>
+                    <h2>{{ applied }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>Shortlisted</h6>
+                    <h2>{{ shortlisted }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>Selected</h6>
+                    <h2>{{ selected }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>Rejected</h6>
+                    <h2>{{ rejected }}</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Recent Applications -->
+
+    <div class="card shadow-sm mt-4">
+
+        <div class="card-header">
+            <h5 class="mb-0">Recent Applications</h5>
+        </div>
+
+        <div class="card-body">
+
+            {% if recent_applications %}
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover">
+
+                    <thead>
+                        <tr>
+                            <th>Job</th>
+                            <th>Company</th>
+                            <th>Applied Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for application in recent_applications %}
+
+                        <tr>
+
+                            <td>
+                                {{ application.job.title }}
+                            </td>
+
+                            <td>
+                                {{ application.job.company.company_name }}
+                            </td>
+
+                            <td>
+                                {{ application.applied_at|date:"d M Y" }}
+                            </td>
+
+                            <td>
+                                <span class="badge bg-primary">
+                                    {{ application.status }}
+                                </span>
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <p class="text-muted">
+                You have not applied for any jobs yet.
+            </p>
+
+            <a href="{% url 'job_list' %}" class="btn btn-primary">
+                Browse Jobs
+            </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+
+{% block title %}
+Job Seeker Dashboard - HireHub
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- ================= HEADER ================= -->
+
+    <div class="mb-4">
+
+        <h2>
+            Welcome, {{ request.user.username }} 👋
+        </h2>
+
+        <p class="text-muted">
+            Job Seeker Dashboard
+        </p>
+
+    </div>
+
+
+    <!-- ================= STATISTICS ================= -->
+
+    <div class="row g-3">
+
+        <!-- Total Applications -->
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Total Applications
+                    </h6>
+
+                    <h2>
+                        {{ total_applications }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Applied -->
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Applied
+                    </h6>
+
+                    <h2>
+                        {{ applied }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Shortlisted -->
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Shortlisted
+                    </h6>
+
+                    <h2>
+                        {{ shortlisted }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Selected -->
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Selected
+                    </h6>
+
+                    <h2>
+                        {{ selected }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= REJECTED ================= -->
+
+    <div class="row g-3 mt-1">
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Rejected
+                    </h6>
+
+                    <h2>
+                        {{ rejected }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= RECENT APPLICATIONS ================= -->
+
+    <div class="card shadow-sm mt-4">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+                Recent Applications
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+            {% if recent_applications %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-bordered table-hover">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Job</th>
+
+                                <th>Company</th>
+
+                                <th>Applied Date</th>
+
+                                <th>Status</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for application in recent_applications %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ application.job.title }}
+                                    </td>
+
+                                    <td>
+                                        {{ application.job.company.company_name }}
+                                    </td>
+
+                                    <td>
+                                        {{ application.applied_at|date:"d M Y" }}
+                                    </td>
+
+                                    <td>
+
+                                        {% if application.status == "Applied" %}
+
+                                            <span class="badge bg-primary">
+                                                Applied
+                                            </span>
+
+                                        {% elif application.status == "Shortlisted" %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                Shortlisted
+                                            </span>
+
+                                        {% elif application.status == "Selected" %}
+
+                                            <span class="badge bg-success">
+                                                Selected
+                                            </span>
+
+                                        {% elif application.status == "Rejected" %}
+
+                                            <span class="badge bg-danger">
+                                                Rejected
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                {{ application.status }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="text-center py-4">
+
+                    <p class="text-muted">
+                        You have not applied for any jobs yet.
+                    </p>
+
+                    <a
+                        href="{% url 'job_list' %}"
+                        class="btn btn-primary">
+
+                        Browse Jobs
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= QUICK ACTION ================= -->
+
+    <div class="mt-4 mb-4">
+
+        <a
+            href="{% url 'job_list' %}"
+            class="btn btn-primary">
+
+            Browse Jobs
+
+        </a>
+
+        <a
+            href="{% url 'my_applications' %}"
+            class="btn btn-outline-dark">
+
+            My Applications
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

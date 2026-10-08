@@ -1,0 +1,569 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Jobs - HireHub
+{% endblock %}
+
+{% block content %}
+
+<!-- =====================================================
+     PAGE HEADER
+===================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2>Available Jobs</h2>
+
+    {% if user.is_authenticated %}
+
+        {% if user.profile.user_type == 'recruiter' %}
+
+            <a
+                href="{% url 'job_create' %}"
+                class="btn btn-primary">
+
+                Post New Job
+
+            </a>
+
+        {% endif %}
+
+    {% endif %}
+
+</div>
+
+
+<!-- =====================================================
+     MESSAGES
+===================================================== -->
+
+{% if messages %}
+
+    {% for message in messages %}
+
+        <div class="alert alert-{{ message.tags }}">
+
+            {{ message }}
+
+        </div>
+
+    {% endfor %}
+
+{% endif %}
+
+
+<!-- =====================================================
+     SEARCH & FILTER
+===================================================== -->
+
+<div class="card shadow mb-4">
+
+    <div class="card-body">
+
+        <h4 class="mb-3">
+            Search & Filter Jobs
+        </h4>
+
+
+        <form method="GET">
+
+            <div class="row g-3">
+
+
+                <!-- ================= KEYWORD ================= -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Keyword
+                    </label>
+
+                    <input
+                        type="text"
+                        name="keyword"
+                        class="form-control"
+                        placeholder="Python, Django, Developer..."
+                        value="{{ request.GET.keyword }}"
+                    >
+
+                </div>
+
+
+                <!-- ================= LOCATION ================= -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Location
+                    </label>
+
+                    <input
+                        type="text"
+                        name="location"
+                        class="form-control"
+                        placeholder="Pune, Mumbai..."
+                        value="{{ request.GET.location }}"
+                    >
+
+                </div>
+
+
+                <!-- ================= JOB TYPE ================= -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Job Type
+                    </label>
+
+                    <select
+                        name="job_type"
+                        class="form-select">
+
+                        <option value="">
+                            All Job Types
+                        </option>
+
+                        {% for type in job_types %}
+
+                            <option
+                                value="{{ type }}"
+                                {% if request.GET.job_type == type %}
+                                    selected
+                                {% endif %}>
+
+                                {{ type }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- ================= EXPERIENCE ================= -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Experience
+                    </label>
+
+                    <input
+                        type="text"
+                        name="experience"
+                        class="form-control"
+                        placeholder="0-2 Years"
+                        value="{{ request.GET.experience }}"
+                    >
+
+                </div>
+
+
+                <!-- ================= CATEGORY ================= -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Category
+                    </label>
+
+                    <select
+                        name="category"
+                        class="form-select">
+
+                        <option value="">
+                            All Categories
+                        </option>
+
+                        {% for category in categories %}
+
+                            <option
+                                value="{{ category.id }}"
+                                {% if request.GET.category == category.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}>
+
+                                {{ category.name }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- ================= MINIMUM SALARY ================= -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Minimum Salary
+                    </label>
+
+                    <input
+                        type="number"
+                        name="salary_min"
+                        class="form-control"
+                        min="0"
+                        placeholder="25000"
+                        value="{{ request.GET.salary_min }}"
+                    >
+
+                </div>
+
+
+                <!-- ================= MAXIMUM SALARY ================= -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Maximum Salary
+                    </label>
+
+                    <input
+                        type="number"
+                        name="salary_max"
+                        class="form-control"
+                        min="0"
+                        placeholder="60000"
+                        value="{{ request.GET.salary_max }}"
+                    >
+
+                </div>
+
+
+                <!-- ================= BUTTONS ================= -->
+
+                <div class="col-md-4 d-flex align-items-end">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary me-2">
+
+                        Search
+
+                    </button>
+
+
+                    <a
+                        href="{% url 'job_list' %}"
+                        class="btn btn-secondary">
+
+                        Clear
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     JOB RESULT HEADER
+===================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h4>
+        Available Jobs
+    </h4>
+
+
+    {% if page_obj %}
+
+        <span class="text-muted">
+
+            {{ page_obj.paginator.count }} jobs found
+
+        </span>
+
+    {% endif %}
+
+</div>
+
+
+<!-- =====================================================
+     JOB LIST
+===================================================== -->
+
+<div class="row">
+
+    {% for job in jobs %}
+
+        <div class="col-md-6 mb-4">
+
+            <div class="card shadow h-100">
+
+                <div class="card-body">
+
+
+                    <!-- ================= JOB TITLE ================= -->
+
+                    <h4>
+
+                        {{ job.title }}
+
+                    </h4>
+
+
+                    <!-- ================= COMPANY ================= -->
+
+                    <h6 class="text-muted">
+
+                        {{ job.company.company_name }}
+
+                    </h6>
+
+
+                    <hr>
+
+
+                    <!-- ================= LOCATION ================= -->
+
+                    <p>
+
+                        <strong>
+                            Location:
+                        </strong>
+
+                        {{ job.location }}
+
+                    </p>
+
+
+                    <!-- ================= JOB TYPE ================= -->
+
+                    <p>
+
+                        <strong>
+                            Job Type:
+                        </strong>
+
+                        {{ job.job_type }}
+
+                    </p>
+
+
+                    <!-- ================= EXPERIENCE ================= -->
+
+                    <p>
+
+                        <strong>
+                            Experience:
+                        </strong>
+
+                        {{ job.experience }}
+
+                    </p>
+
+
+                    <!-- ================= SALARY ================= -->
+
+                    <p>
+
+                        <strong>
+                            Salary:
+                        </strong>
+
+                        ₹{{ job.salary_min }}
+
+                        -
+
+                        ₹{{ job.salary_max }}
+
+                    </p>
+
+
+                    <!-- ================= CATEGORY ================= -->
+
+                    {% if job.category %}
+
+                        <p>
+
+                            <strong>
+                                Category:
+                            </strong>
+
+                            {{ job.category.name }}
+
+                        </p>
+
+                    {% endif %}
+
+
+                    <!-- ================= DESCRIPTION ================= -->
+
+                    {% if job.description %}
+
+                        <p class="text-muted">
+
+                            {{ job.description|truncatewords:20 }}
+
+                        </p>
+
+                    {% endif %}
+
+
+                    <!-- ================= VIEW DETAILS ================= -->
+
+                    <a
+                        href="{% url 'job_detail' job.pk %}"
+                        class="btn btn-outline-primary">
+
+                        View Details
+
+                    </a>
+
+
+                    <!-- ================= RECRUITER ACTIONS ================= -->
+
+                    {% if user.is_authenticated %}
+
+                        {% if user.profile.user_type == 'recruiter' %}
+
+                            {% if job.company.recruiter == user %}
+
+                                <a
+                                    href="{% url 'job_update' job.pk %}"
+                                    class="btn btn-warning">
+
+                                    Edit
+
+                                </a>
+
+
+                                <a
+                                    href="{% url 'job_delete' job.pk %}"
+                                    class="btn btn-danger">
+
+                                    Delete
+
+                                </a>
+
+                            {% endif %}
+
+                        {% endif %}
+
+                    {% endif %}
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    {% empty %}
+
+
+        <!-- ================= NO JOBS ================= -->
+
+        <div class="col-12">
+
+            <div class="alert alert-info text-center">
+
+                <h5>
+                    No jobs found.
+                </h5>
+
+                <p class="mb-0">
+
+                    Try changing your search or filter criteria.
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+    {% endfor %}
+
+</div>
+
+
+<!-- =====================================================
+     PAGINATION
+===================================================== -->
+
+{% if is_paginated %}
+
+    <nav aria-label="Job pagination">
+
+        <ul class="pagination justify-content-center">
+
+
+            <!-- ================= PREVIOUS ================= -->
+
+            {% if page_obj.has_previous %}
+
+                <li class="page-item">
+
+                    <a
+                        class="page-link"
+                        href="?keyword={{ request.GET.keyword|urlencode }}&location={{ request.GET.location|urlencode }}&job_type={{ request.GET.job_type|urlencode }}&experience={{ request.GET.experience|urlencode }}&category={{ request.GET.category|urlencode }}&salary_min={{ request.GET.salary_min|urlencode }}&salary_max={{ request.GET.salary_max|urlencode }}&page={{ page_obj.previous_page_number }}">
+
+                        Previous
+
+                    </a>
+
+                </li>
+
+            {% endif %}
+
+
+            <!-- ================= CURRENT PAGE ================= -->
+
+            <li class="page-item active">
+
+                <span class="page-link">
+
+                    Page {{ page_obj.number }}
+
+                    of
+
+                    {{ page_obj.paginator.num_pages }}
+
+                </span>
+
+            </li>
+
+
+            <!-- ================= NEXT ================= -->
+
+            {% if page_obj.has_next %}
+
+                <li class="page-item">
+
+                    <a
+                        class="page-link"
+                        href="?keyword={{ request.GET.keyword|urlencode }}&location={{ request.GET.location|urlencode }}&job_type={{ request.GET.job_type|urlencode }}&experience={{ request.GET.experience|urlencode }}&category={{ request.GET.category|urlencode }}&salary_min={{ request.GET.salary_min|urlencode }}&salary_max={{ request.GET.salary_max|urlencode }}&page={{ page_obj.next_page_number }}">
+
+                        Next
+
+                    </a>
+
+                </li>
+
+            {% endif %}
+
+
+        </ul>
+
+    </nav>
+
+{% endif %}
+
+{% endblock %}

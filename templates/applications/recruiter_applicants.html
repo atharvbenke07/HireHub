@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Applicants - HireHub
+{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    Job Applicants
+</h2>
+
+{% if applications %}
+
+<div class="table-responsive">
+
+<table class="table table-bordered table-hover">
+
+    <thead class="table-dark">
+
+        <tr>
+
+            <th>Candidate</th>
+            <th>Job</th>
+            <th>Email</th>
+            <th>Resume</th>
+            <th>Applied On</th>
+            <th>Status</th>
+            <th>Action</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for application in applications %}
+
+        <tr>
+
+            <td>
+                {{ application.applicant.username }}
+            </td>
+
+            <td>
+                {{ application.job.title }}
+            </td>
+
+            <td>
+                {{ application.applicant.email }}
+            </td>
+
+            <td>
+
+                {% if application.resume %}
+
+                    <a
+                        href="{{ application.resume.url }}"
+                        target="_blank">
+
+                        View Resume
+
+                    </a>
+
+                {% else %}
+
+                    No Resume
+
+                {% endif %}
+
+            </td>
+
+            <td>
+                {{ application.applied_at|date:"d M Y" }}
+            </td>
+
+            <td>
+
+                {{ application.get_status_display }}
+
+            </td>
+
+            <td>
+
+                <a
+                    href="{% url 'update_application_status' application.pk %}"
+                    class="btn btn-sm btn-primary">
+
+                    Update Status
+
+                </a>
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+{% else %}
+
+<div class="alert alert-info">
+
+    No applicants found.
+
+</div>
+
+{% endif %}
+
+{% endblock %}

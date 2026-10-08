@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Update Application - HireHub
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-md-6">
+
+        <div class="card shadow">
+
+            <div class="card-body">
+
+                <h3>
+                    Update Application Status
+                </h3>
+
+                <hr>
+
+                <p>
+                    <strong>Candidate:</strong>
+                    {{ application.applicant.username }}
+                </p>
+
+                <p>
+                    <strong>Job:</strong>
+                    {{ application.job.title }}
+                </p>
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    {{ form.as_p }}
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Update Status
+
+                    </button>
+
+                    <a
+                        href="{% url 'recruiter_applicants' %}"
+                        class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

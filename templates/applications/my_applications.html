@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}
+My Applications - HireHub
+{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    My Applications
+</h2>
+
+{% if applications %}
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered table-hover">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>Job</th>
+                    <th>Company</th>
+                    <th>Location</th>
+                    <th>Applied On</th>
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for application in applications %}
+
+                    <tr>
+
+                        <td>
+
+                            <a
+                                href="{% url 'job_detail' application.job.pk %}">
+
+                                {{ application.job.title }}
+
+                            </a>
+
+                        </td>
+
+                        <td>
+                            {{ application.job.company.company_name }}
+                        </td>
+
+                        <td>
+                            {{ application.job.location }}
+                        </td>
+
+                        <td>
+                            {{ application.applied_at|date:"d M Y" }}
+                        </td>
+
+                        <td>
+
+                            {% if application.status == 'Applied' %}
+
+                                <span class="badge bg-primary">
+                                    Applied
+                                </span>
+
+                            {% elif application.status == 'Shortlisted' %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Shortlisted
+                                </span>
+
+                            {% elif application.status == 'Selected' %}
+
+                                <span class="badge bg-success">
+                                    Selected
+                                </span>
+
+                            {% elif application.status == 'Rejected' %}
+
+                                <span class="badge bg-danger">
+                                    Rejected
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+{% else %}
+
+    <div class="alert alert-info">
+
+        You have not applied for any jobs yet.
+
+    </div>
+
+{% endif %}
+
+{% endblock %}

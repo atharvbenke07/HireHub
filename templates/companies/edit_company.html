@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Edit Company - HireHub
+{% endblock %}
+
+{% block content %}
+
+<h2>Edit Company</h2>
+
+<form
+    method="POST"
+    enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button
+        type="submit"
+        class="btn btn-primary">
+        Update Company
+    </button>
+
+    <a
+        href="{% url 'company' %}"
+        class="btn btn-secondary">
+        Cancel
+    </a>
+
+</form>
+
+{% endblock %}

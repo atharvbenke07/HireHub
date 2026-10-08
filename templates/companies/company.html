@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Company - HireHub
+{% endblock %}
+
+{% block content %}
+
+<div class="card shadow">
+
+    <div class="card-body">
+
+        {% if company.logo %}
+            <img
+                src="{{ company.logo.url }}"
+                width="120"
+                class="mb-3">
+        {% endif %}
+
+        <h2>
+            {{ company.company_name }}
+        </h2>
+
+        <p>
+            <strong>Description:</strong>
+            {{ company.description }}
+        </p>
+
+        <p>
+            <strong>Location:</strong>
+            {{ company.location }}
+        </p>
+
+        <p>
+            <strong>Website:</strong>
+
+            {% if company.website %}
+                <a
+                    href="{{ company.website }}"
+                    target="_blank">
+                    {{ company.website }}
+                </a>
+            {% else %}
+                Not provided
+            {% endif %}
+        </p>
+
+        {% if user.is_authenticated and user.profile.user_type == 'recruiter' %}
+
+            <a
+                href="{% url 'edit_company' %}"
+                class="btn btn-primary">
+                Edit Company
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
